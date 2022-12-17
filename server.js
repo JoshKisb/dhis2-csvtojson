@@ -64,8 +64,8 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 
 	try {
 		convert(req.file.path, payload).then((results) => {
-			const data = { events: [results[0]] };
-         fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
+			const data = { events: results };
+         //fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
          fs.unlinkSync(req.file.path);
 
 			axios
@@ -76,7 +76,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 					},
 				})
 				.then(function (response) {
-					console.log(response);
+					//console.log(response);
 					res.json(response.data);
 				})
 				.catch(function (error) {
