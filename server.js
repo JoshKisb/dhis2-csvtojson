@@ -53,6 +53,10 @@ const deathPayload = {
    geometry: null,
 }
 
+app.get('/', (req, res) => {
+   res.send("API Server is running");
+})
+
 app.post("/", upload.single("file"), async function (req, res, next) {
 	// req.file is the `avatar` file
 	// req.body will hold the text fields, if there were any
@@ -63,7 +67,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 			const data = { events: [results[0]] };
          fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
          fs.unlink(req.file.path);
-         
+
 			axios
 				.post(`${apiUrl}/api/events`, data, {
 					auth: {
