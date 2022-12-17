@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { convert, chunk } = require("./converter");
 
 const args = process.argv;
