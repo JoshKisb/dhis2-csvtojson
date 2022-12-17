@@ -2,3 +2,5 @@ node_modules/
 output*.json
 *.csv
 *.csv#
+*.xlsx
+*.xlsx#
