@@ -66,7 +66,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 		convert(req.file.path, payload).then((results) => {
 			const data = { events: [results[0]] };
          fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
-         fs.unlink(req.file.path);
+         fs.unlinkSync(req.file.path);
 
 			axios
 				.post(`${apiUrl}/api/events`, data, {
