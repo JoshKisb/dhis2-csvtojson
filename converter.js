@@ -26,8 +26,8 @@ const convert = (filename, payload) => {
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
                   const val = data[f].replace(/^(\d+)\/(\d+)/, "$2/$1")
-                  console.log(val);
-                  data[f] = moment(val).format("YYYY-MM-DD");
+                  
+                  data[f] = moment(val, ["D/M/YYYY","DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
                }
 				});
 
