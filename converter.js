@@ -17,6 +17,29 @@ const nonDEFields = [
 
 const dateFields = ["iN4MkMAfTCI", "l1pU8bGbUmO"];
 
+function getIdFromArray(orgUnitName, data) {
+	// Loop through each object in the data array
+	for (let i = 0; i < data.length; i++) {
+	  const obj = data[i];
+ 
+	  // Check if the orgUnitName is in the MVRS_Facilities field
+	  if (obj.MVRS_Facilities === orgUnitName) {
+		 // Return the ID field
+		 return obj.ID;
+	  }
+ 
+	  // Check if the orgUnitName is in the MVRS_SUB field
+	  if (obj.MVRS_SUB === orgUnitName) {
+		 // Return the SUB field
+		 return obj.SUB;
+	  }
+	}
+ 
+	// If the orgUnitName was not found, return null
+	return null;
+ }
+ 
+
 const convert = (filename, payload) => {
 	return new Promise((resolve, reject) => {
 		const results = [];
