@@ -80,10 +80,13 @@ const makeAPIRequest = (data) => {
 app.post("/", upload.single("file"), async function (req, res, next) {
 	// req.file is the `avatar` file
 	// req.body will hold the text fields, if there were any
+	console.log("Received request...")
 	const payload = req.body["type"] == "births" ? birthPayload : deathPayload;
 
 	try {
-		convert(req.file.path, payload).then((results) => {
+		convert(req.file.path, payload).then(async (results) => {
+			console.log("Converted to json...")
+
 			// const data = { events: results };
 			//fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
 			fs.unlinkSync(req.file.path);
@@ -91,9 +94,24 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 
 			const chunks = chunk(results, chunkCount);
 
-			Promise.all(chunks.map(chunk => makeAPIRequest({ events: chunk })))
-			.then(res => res.json(res))
-			.catch(err => res.json(err))
+			console.log(`Posting data to ${apiUrl}/api/events. ${chunkCount} chunks`)
+
+			resp = [];
+
+			try {
+				for(let x = 0; x < chunks.length; x++) {
+					const res = await makeAPIRequest(chunks[x])
+					resp.push(res)
+					setTimeout(() => {}, 500)
+				}
+				res.json(resp)
+				
+			} catch(err) {
+				res.json({ error: err })
+			}
+			// Promise.all(chunks.map(chunk => makeAPIRequest(chunk)))
+			// .then(res => res.json(res))
+			// .catch(err => res.json(err))
 		});
 	} catch (error) {
 		console.error(error);

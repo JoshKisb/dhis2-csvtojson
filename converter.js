@@ -83,10 +83,15 @@ const chunk = (results, chunkCount) => {
 	for (let i = 0; i < results.length; i += chunkSize) {
 		const chunk = results.slice(i, i + chunkSize);
 
-		const data = JSON.stringify({ events: chunk }, null, 4);
+		const data = { events: chunk };
 
+		const outfile = `output${i + 1}.json`
+
+		fs.writeFileSync(outfile, JSON.stringify(data, {}, 4), "utf8");
 		chunks.push(data);
 	}
+
+	return chunks;
 };
 
 module.exports = { convert, chunk };
