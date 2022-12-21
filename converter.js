@@ -36,7 +36,7 @@ const createMap = (filename) => {
 };
 const getIdFromMap = (orgUnitName) => {
 	const facility = map.find((f) => {
-		f.facilityName.toLowerCase() == orgUnitName.toLowerCase();
+		return f.facilityName.toLowerCase() == orgUnitName.toLowerCase();
 	});
 
 	return facility?.id;
@@ -95,8 +95,8 @@ const mapOrgUnit = (event, facilitycolumn) => {
 		if (!!orgUnit) {
 			console.log(`map org: [${data.value} => ${orgUnit}]`);
 			return { ...event, orgUnit };
-		}
-	} else console.log(`failed for: ${data.value}`);
+		} else console.log(`failed for: ${data.value}`);
+	} 
 	return event;
 };
 
@@ -118,4 +118,4 @@ const chunk = (results, chunkCount) => {
 	return chunks;
 };
 
-module.exports = { convert, chunk, createMap, mapOrgUnit };
+module.exports = { convert, chunk, createMap, mapOrgUnit, getIdFromMap };
