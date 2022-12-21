@@ -2,7 +2,7 @@ const fs = require("fs");
 const axios = require("axios");
 const express = require("express");
 const multer = require("multer");
-const { convert, chunk } = require("./converter");
+const { convert, chunk, mapOrgUnit } = require("./converter");
 const { resolve } = require("path");
 const upload = multer({ dest: "uploads/" });
 
@@ -19,7 +19,7 @@ const birthPayload = {
 	programStage: "iHc8FhAHLMw",
 	enrollment: "qCczUwH7LKN",
 	orgUnit: "FvewOonC8lS",
-	orgUnitName: "Adilang HC III",
+	//orgUnitName: "Adilang HC III",
 	occurredAt: "2015-01-05",
 	followup: false,
 	deleted: false,
@@ -80,12 +80,17 @@ const makeAPIRequest = (data) => {
 app.post("/", upload.single("file"), async function (req, res, next) {
 	// req.file is the `avatar` file
 	// req.body will hold the text fields, if there were any
-	console.log("Received request...")
+	console.log("Received request...");
 	const payload = req.body["type"] == "births" ? birthPayload : deathPayload;
+	const facilitycolumn = req.body["facility_col"] ?? null;
 
 	try {
-		convert(req.file.path, payload).then(async (results) => {
-			console.log("Converted to json...")
+		convert(req.file.path, payload).then(async (events) => {
+			const results = !!facilitycolumn
+				? events.map((e) => mapOrgUnit(e, facilitycolumn))
+				: events;
+
+			console.log("Converted to json...");
 
 			// const data = { events: results };
 			//fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
@@ -94,20 +99,21 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 
 			const chunks = chunk(results, chunkCount);
 
-			console.log(`Posting data to ${apiUrl}/api/events. ${chunkCount} chunks`)
+			console.log(
+				`Posting data to ${apiUrl}/api/events. ${chunkCount} chunks`
+			);
 
 			resp = [];
 
 			try {
-				for(let x = 0; x < chunks.length; x++) {
-					const res = await makeAPIRequest(chunks[x])
-					resp.push(res)
-					setTimeout(() => {}, 500)
+				for (let x = 0; x < chunks.length; x++) {
+					const res = await makeAPIRequest(chunks[x]);
+					resp.push(res);
+					setTimeout(() => {}, 500);
 				}
-				res.json(resp)
-				
-			} catch(err) {
-				res.json({ error: err })
+				res.json(resp);
+			} catch (err) {
+				res.json({ error: err });
 			}
 			// Promise.all(chunks.map(chunk => makeAPIRequest(chunk)))
 			// .then(res => res.json(res))

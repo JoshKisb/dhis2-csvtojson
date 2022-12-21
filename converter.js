@@ -1,6 +1,7 @@
 const csv = require("csv-parser");
 const fs = require("fs");
 const moment = require("moment");
+const map = require("./map.json");
 
 const nonDEFields = [
 	"event",
@@ -11,36 +12,37 @@ const nonDEFields = [
 	"programStage",
 	"program",
 	"attributeCategoryOptions",
-   "#N/A"
+	"#N/A",
 ];
-
 
 const dateFields = ["iN4MkMAfTCI", "l1pU8bGbUmO"];
 
-function getIdFromArray(orgUnitName, data) {
-	// Loop through each object in the data array
-	for (let i = 0; i < data.length; i++) {
-	  const obj = data[i];
- 
-	  // Check if the orgUnitName is in the MVRS_Facilities field
-	  if (obj.MVRS_Facilities === orgUnitName) {
-		 // Return the ID field
-		 return obj.ID;
-	  }
- 
-	  // Check if the orgUnitName is in the MVRS_SUB field
-	  if (obj.MVRS_SUB === orgUnitName) {
-		 // Return the SUB field
-		 return obj.SUB;
-	  }
-	}
- 
-	// If the orgUnitName was not found, return null
-	return null;
- }
- 
+const createMap = (filename) => {
+	return new Promise((resolve, reject) => {
+		const results = [];
+		fs.createReadStream(filename)
+			.pipe(csv({ skipComments: true }))
+			.on("data", (data) => {
+				// console.log(data)
+				results.push({
+					facilityName: data["MVRS_Facilities"],
+					id: data["FAC"],
+				});
+			})
+			.on("end", () => {
+				resolve(results);
+			});
+	});
+};
+const getIdFromMap = (orgUnitName) => {
+	const facility = map.find((f) => {
+		f.facilityName.toLocaleLowerCase() == orgUnitName;
+	});
 
-const convert = (filename, payload) => {
+	return facility?.id;
+};
+
+const convert = (filename, payload, orgUnit) => {
 	return new Promise((resolve, reject) => {
 		const results = [];
 		fs.createReadStream(filename)
@@ -48,10 +50,14 @@ const convert = (filename, payload) => {
 			.on("data", (data) => {
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
-                  const val = data[f].replace(/^(\d+)\/(\d+)/, "$2/$1")
-                  
-                  data[f] = moment(val, ["D/M/YYYY","DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD");
-               }
+						const val = data[f].replace(/^(\d+)\/(\d+)/, "$2/$1");
+
+						data[f] = moment(val, [
+							"D/M/YYYY",
+							"DD/MM/YYYY",
+							"YYYY-MM-DD",
+						]).format("YYYY-MM-DD");
+					}
 				});
 
 				const event = {
@@ -68,12 +74,29 @@ const convert = (filename, payload) => {
 						}))
 						.filter((de) => !!de.dataElement),
 				};
+
 				results.push(event);
 			})
 			.on("end", () => {
 				resolve(results);
 			});
 	});
+};
+
+const mapOrgUnit = (event, facilitycolumn) => {
+	const data = event.dataValues.find(
+		(de) =>
+			de.dataElement.toLocaleLowerCase() ==
+			facilitycolumn.toLocaleLowerCase()
+	);
+	if (!!data) {
+		const orgUnit = getIdFromMap(data.value);
+
+		if (!!orgUnit) {
+			event["orgUnit"] = orgUnit;
+		}
+	}
+	return event;
 };
 
 const chunk = (results, chunkCount) => {
@@ -85,7 +108,7 @@ const chunk = (results, chunkCount) => {
 
 		const data = { events: chunk };
 
-		const outfile = `output${i + 1}.json`
+		const outfile = `output${i + 1}.json`;
 
 		fs.writeFileSync(outfile, JSON.stringify(data, {}, 4), "utf8");
 		chunks.push(data);
@@ -94,4 +117,4 @@ const chunk = (results, chunkCount) => {
 	return chunks;
 };
 
-module.exports = { convert, chunk };
+module.exports = { convert, chunk, createMap, mapOrgUnit };
