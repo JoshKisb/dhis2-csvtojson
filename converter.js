@@ -36,7 +36,7 @@ const createMap = (filename) => {
 };
 const getIdFromMap = (orgUnitName) => {
 	const facility = map.find((f) => {
-		f.facilityName.toLocaleLowerCase() == orgUnitName;
+		f.facilityName.toLowerCase() == orgUnitName.toLowerCase();
 	});
 
 	return facility?.id;
@@ -91,13 +91,12 @@ const mapOrgUnit = (event, facilitycolumn) => {
 	);
 	if (!!data) {
 		const orgUnit = getIdFromMap(data.value);
-		
+
 		if (!!orgUnit) {
-			console.log(`map org: [${data.value} => ${orgUnit}]`)
-			return {...event, orgUnit };
+			console.log(`map org: [${data.value} => ${orgUnit}]`);
+			return { ...event, orgUnit };
 		}
-	} else
-		console.log(`failed for: ${data.value}`)
+	} else console.log(`failed for: ${data.value}`);
 	return event;
 };
 
