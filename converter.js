@@ -91,11 +91,13 @@ const mapOrgUnit = (event, facilitycolumn) => {
 	);
 	if (!!data) {
 		const orgUnit = getIdFromMap(data.value);
-
+		
 		if (!!orgUnit) {
-			event["orgUnit"] = orgUnit;
+			console.log(`map org: [${data.value} => ${orgUnit}]`)
+			return {...event, orgUnit };
 		}
-	}
+	} else
+		console.log(`failed for: ${data.value}`)
 	return event;
 };
 
