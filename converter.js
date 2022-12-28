@@ -46,7 +46,7 @@ const convert = (filename, payload, orgUnit) => {
 	return new Promise((resolve, reject) => {
 		const results = [];
 		fs.createReadStream(filename)
-			.pipe(csv({ skipComments: true }))
+			.pipe(csv({ skipComments: false }))
 			.on("data", (data) => {
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
