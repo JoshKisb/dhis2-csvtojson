@@ -103,13 +103,16 @@ const mapOrgUnit = (event, facilitycolumn) => {
 const chunk = (results, chunkCount) => {
 	const chunkSize = results.length / chunkCount;
 	const chunks = [];
+	const timestr = Date.now();
+	let x = 0;
 
 	for (let i = 0; i < results.length; i += chunkSize) {
+		x += 1;
 		const chunk = results.slice(i, i + chunkSize);
 
 		const data = { events: chunk };
 
-		const outfile = `output${i + 1}.json`;
+		const outfile = `payloads/${timestr}_payload_${x}.json`;
 
 		fs.writeFileSync(outfile, JSON.stringify(data, {}, 4), "utf8");
 		chunks.push(data);
