@@ -46,7 +46,7 @@ const convert = (filename, payload, orgUnit) => {
 	return new Promise((resolve, reject) => {
 		const results = [];
 		fs.createReadStream(filename)
-			.pipe(csv({ skipComments: false }))
+			.pipe(csv({ skipComments: true }))
 			.on("data", (data) => {
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
@@ -69,7 +69,7 @@ const convert = (filename, payload, orgUnit) => {
 					dataValues: Object.keys(data)
 						.filter((f) => !nonDEFields.includes(f))
 						.map((key) => ({
-							dataElement: `MVRS_${key}`,
+							dataElement: key,
 							value: data[key].replace(/ 00:00:00.0$/, ""),
 						}))
 						.filter((de) => !!de.dataElement),
