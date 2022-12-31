@@ -4,9 +4,9 @@ const express = require("express");
 const multer = require("multer");
 const { convert, chunk, mapOrgUnit } = require("./converter");
 const { resolve } = require("path");
-const upload = multer({ dest: "uploads/" });
-const birthsDEMap = require('./dataelements/births.json')
-const deathsDEMap = require('./dataelements/deaths.json')
+const upload = multer({ dest: "../uploads/" });
+const birthsDEMap = require('../dataelements/births.json')
+const deathsDEMap = require('../dataelements/deaths.json')
 
 const app = express();
 const port = 3000;
