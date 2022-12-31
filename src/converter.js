@@ -85,23 +85,31 @@ const convert = (filename, payload, deMap) => {
 
 const mapOrgUnit = (event, facilitycolumns) => {
 	let data = null;
-	facilitycolumns.every(facilitycolumn => {
-		data = event.dataValues.find(
+	console.log(facilitycolumns);
+
+	data = facilitycolumns.map((facilitycolumn) => {
+		return event.dataValues.find(
 			(de) =>
 				de.dataElement.toLocaleLowerCase() ==
 				facilitycolumn.toLocaleLowerCase()
 		);
-		// breaks when falsy/ if data set then break
-		return !data;
-	});
-	if (!!data) {
-		const orgUnit = getIdFromMap(data.value);
+	}).filter(d => !!d);
+
+	if (!!data && !!data.length) {
+
+		let orgUnit = null;
+		for (let i = 0; i < data.length; i++) {
+			const de = data[i];
+			
+			orgUnit = getIdFromMap(de.value);
+			if (!!orgUnit) break;
+		}
 
 		if (!!orgUnit) {
 			console.log(`map org: [${data.value} => ${orgUnit}]`);
 			return { ...event, orgUnit };
 		} else console.log(`failed for: ${data.value}`);
-	} 
+	}
 	return event;
 };
 
