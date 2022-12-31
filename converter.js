@@ -42,7 +42,7 @@ const getIdFromMap = (orgUnitName) => {
 	return facility?.id;
 };
 
-const convert = (filename, payload, orgUnit) => {
+const convert = (filename, payload, deMap) => {
 	return new Promise((resolve, reject) => {
 		const results = [];
 		fs.createReadStream(filename)
@@ -69,7 +69,7 @@ const convert = (filename, payload, orgUnit) => {
 					dataValues: Object.keys(data)
 						.filter((f) => !nonDEFields.includes(f))
 						.map((key) => ({
-							dataElement: key,
+							dataElement: deMap[key],
 							value: data[key].replace(/ 00:00:00.0$/, ""),
 						}))
 						.filter((de) => !!de.dataElement),

@@ -5,6 +5,8 @@ const multer = require("multer");
 const { convert, chunk, mapOrgUnit } = require("./converter");
 const { resolve } = require("path");
 const upload = multer({ dest: "uploads/" });
+const birthsDEMap = require('./dataelements/births.json')
+const deathsDEMap = require('./dataelements/deaths.json')
 
 const app = express();
 const port = 3000;
@@ -82,10 +84,11 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 	// req.body will hold the text fields, if there were any
 	console.log("Received request...");
 	const payload = req.body["type"] == "births" ? birthPayload : deathPayload;
+	const deMap = req.body["type"] == "births" ? birthsDEMap : deathsDEMap;
 	const facilitycolumn = req.body["facility_col"] ?? null;
 
 	try {
-		convert(req.file.path, payload).then(async (events) => {
+		convert(req.file.path, payload, deMap).then(async (events) => {
 			const results = !!facilitycolumn
 				? events.map((e) => mapOrgUnit(e, facilitycolumn))
 				: events;
