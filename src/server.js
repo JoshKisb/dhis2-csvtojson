@@ -85,12 +85,12 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 	console.log("Received request...");
 	const payload = req.body["type"] == "births" ? birthPayload : deathPayload;
 	const deMap = req.body["type"] == "births" ? birthsDEMap : deathsDEMap;
-	const facilitycolumn = req.body["facility_col"] ?? null;
+	const facilitycolumns = req.body["facility_col"]?.split(',') ?? null;
 
 	try {
 		convert(req.file.path, payload, deMap).then(async (events) => {
-			const results = !!facilitycolumn
-				? events.map((e) => mapOrgUnit(e, facilitycolumn))
+			const results = !!facilitycolumns
+				? events.map((e) => mapOrgUnit(e, facilitycolumns))
 				: events;
 
 			console.log("Converted to json...");

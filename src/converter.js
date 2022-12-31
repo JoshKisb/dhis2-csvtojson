@@ -83,12 +83,17 @@ const convert = (filename, payload, deMap) => {
 	});
 };
 
-const mapOrgUnit = (event, facilitycolumn) => {
-	const data = event.dataValues.find(
-		(de) =>
-			de.dataElement.toLocaleLowerCase() ==
-			facilitycolumn.toLocaleLowerCase()
-	);
+const mapOrgUnit = (event, facilitycolumns) => {
+	let data = null;
+	facilitycolumns.every(facilitycolumn => {
+		data = event.dataValues.find(
+			(de) =>
+				de.dataElement.toLocaleLowerCase() ==
+				facilitycolumn.toLocaleLowerCase()
+		);
+		// breaks when falsy/ if data set then break
+		return !data;
+	});
 	if (!!data) {
 		const orgUnit = getIdFromMap(data.value);
 
