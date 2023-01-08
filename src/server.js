@@ -108,7 +108,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 			console.log("Converted to json...");
 
 			const timestr = Date.now();
-			const outfile = `payloads/${timestr}_failed_${x}.json`;
+			const outfile = `payloads/${timestr}_failed.json`;
 			// const data = { events: results };
 			fs.writeFileSync(outfile, JSON.stringify(failedOrgs, {}, 2), "utf8");
 			//fs.unlinkSync(req.file.path);
