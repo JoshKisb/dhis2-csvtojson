@@ -113,7 +113,7 @@ const mapOrgUnit = (event, facilitycolumns) => {
 			return null;
 		}
 	}
-	return event;
+	return null;
 };
 
 const chunk = (results, chunkCount) => {
