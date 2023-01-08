@@ -90,7 +90,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 	try {
 		convert(req.file.path, payload, deMap).then(async (events) => {
 			const results = !!facilitycolumns
-				? events.map((e) => mapOrgUnit(e, facilitycolumns))
+				? events.map((e) => mapOrgUnit(e, facilitycolumns)).filter(e => !!e)
 				: events;
 
 			console.log("Converted to json...");

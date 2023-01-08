@@ -108,7 +108,10 @@ const mapOrgUnit = (event, facilitycolumns) => {
 		if (!!orgUnit) {
 			// console.log(`map org: [${data.map.value} => ${orgUnit}]`);
 			return { ...event, orgUnit };
-		} else console.log(`failed for: ${data.value}`);
+		} else {
+			console.log(`failed for: ${data.value}`);
+			return null;
+		}
 	}
 	return event;
 };
