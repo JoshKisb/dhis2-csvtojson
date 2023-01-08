@@ -25,7 +25,7 @@ const createMap = (filename) => {
 			.on("data", (data) => {
 				// console.log(data)
 				results.push({
-					facilityName: data["MVRS_Facilities"],
+					facilityName: data["Health Facility"],
 					id: data["FAC"],
 				});
 			})
@@ -106,7 +106,7 @@ const mapOrgUnit = (event, facilitycolumns) => {
 		}
 
 		if (!!orgUnit) {
-			console.log(`map org: [${data.value} => ${orgUnit}]`);
+			// console.log(`map org: [${data.map.value} => ${orgUnit}]`);
 			return { ...event, orgUnit };
 		} else console.log(`failed for: ${data.value}`);
 	}
