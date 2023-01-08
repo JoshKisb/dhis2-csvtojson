@@ -46,7 +46,7 @@ const convert = (filename, payload, deMap) => {
 	return new Promise((resolve, reject) => {
 		const results = [];
 		fs.createReadStream(filename)
-			.pipe(csv({ skipComments: true }))
+			.pipe(csv({ skipComments: false }))
 			.on("data", (data) => {
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
@@ -60,6 +60,7 @@ const convert = (filename, payload, deMap) => {
 					}
 				});
 
+				// console.log("Object.keys(data)", Object.keys(data))
 				const event = {
 					...payload,
 					completedDate: data["completedDate"]?.replace(
@@ -75,6 +76,7 @@ const convert = (filename, payload, deMap) => {
 						.filter((de) => !!de.dataElement),
 				};
 
+				// console.log("ev", event);
 				results.push(event);
 			})
 			.on("end", () => {
@@ -85,7 +87,9 @@ const convert = (filename, payload, deMap) => {
 
 const mapOrgUnit = (event, facilitycolumns) => {
 	let data = null;
-	console.log(facilitycolumns);
+	// console.log("facilitycolumns", facilitycolumns);
+
+	// console.log("dava", event);
 
 	data = facilitycolumns.map((facilitycolumn) => {
 		return event.dataValues.find(
@@ -95,6 +99,8 @@ const mapOrgUnit = (event, facilitycolumns) => {
 		);
 	}).filter(d => !!d);
 
+	// console.log("data", data)
+
 	if (!!data && !!data.length) {
 
 		let orgUnit = null;
@@ -102,14 +108,15 @@ const mapOrgUnit = (event, facilitycolumns) => {
 			const de = data[i];
 			
 			orgUnit = getIdFromMap(de.value);
-			if (!!orgUnit) break;
+			if (!!orgUnit && orgUnit != "#N/A") break;
 		}
 
-		if (!!orgUnit) {
+		if (!!orgUnit && orgUnit != "#N/A") {
 			// console.log(`map org: [${data.map.value} => ${orgUnit}]`);
-			return { ...event, orgUnit };
+			return { ...event, 
+				orgUnit };
 		} else {
-			console.log(`failed for: ${data.value}`);
+			// console.log(`failed for: ${data.value}`);
 			return null;
 		}
 	}

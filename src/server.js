@@ -89,14 +89,28 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 
 	try {
 		convert(req.file.path, payload, deMap).then(async (events) => {
-			const results = !!facilitycolumns
-				? events.map((e) => mapOrgUnit(e, facilitycolumns)).filter(e => !!e)
-				: events;
+			let results = events;
+			const failedOrgs = [];
+			const successOrgs = [];
+
+			if (!!facilitycolumns) {
+				events.forEach(e => {
+
+					const ev = mapOrgUnit(e, facilitycolumns)
+					if (!ev) 
+						failedOrgs.push(e);
+					else 
+						successOrgs.push(ev);
+				})
+				results = successOrgs;
+			}
 
 			console.log("Converted to json...");
 
+			const timestr = Date.now();
+			const outfile = `payloads/${timestr}_failed_${x}.json`;
 			// const data = { events: results };
-			//fs.writeFileSync("output.json", JSON.stringify(data, {}, 2), "utf8");
+			fs.writeFileSync(outfile, JSON.stringify(failedOrgs, {}, 2), "utf8");
 			//fs.unlinkSync(req.file.path);
 			const chunkCount = Math.ceil(results.length / 50);
 
