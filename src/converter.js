@@ -74,10 +74,10 @@ const convert = (filename, payload, deMap) => {
 						""
 					),
 					dataValues: Object.keys(data)
-						.filter((f) => !nonDEFields.includes(f))
+						.filter((f) => !nonDEFields.includes(f) && !!data[key])
 						.map((key) => ({
 							dataElement: deMap[key],
-							value: data[key].replace(/ 00:00:00.0$/, ""),
+							value: data[key]?.replace(/ 00:00:00.0$/, ""),
 						}))
 						.filter((de) => !!de.dataElement),
 				};
