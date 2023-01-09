@@ -51,7 +51,7 @@ const convert = (filename, payload, deMap) => {
 
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
-						const val = data[f];//.replace(/^(\d+)\/(\d+)/, "$2/$1");
+						const val = data[f].replace(/^(\d+)\/(\d+)/, "$2/$1");
 						// console.log("val", val);
 						data[f] = moment(val, [
 							"D/M/YYYY",
