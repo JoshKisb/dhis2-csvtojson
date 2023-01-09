@@ -130,9 +130,9 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 			try {
 				for (let x = 0; x < chunks.length; x++) {
 					const res = await makeAPIRequest(chunks[x]);
-					console.log(`Posted chunk ${x+1}`)
+					console.log(`Posted chunk ${x+1}/${chunkCount}`)
 					resp.push(res);
-					setTimeout(() => {}, 500);
+					setTimeout(() => {}, 1500);
 				}
 				console.log("completed posting")
 				res.json(resp);

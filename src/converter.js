@@ -55,7 +55,7 @@ const convert = (filename, payload, deMap) => {
 							data[f] = null;
 						} else {
 							const val = data[f];//.replace(/^(\d+)\/(\d+)/, "$2/$1");
-							console.log("val", val);
+							// console.log("val", val);
 							data[f] = moment(val, [
 								"D/M/YYYY",
 								"DD/MM/YYYY",
