@@ -15,7 +15,7 @@ const nonDEFields = [
 	"#N/A",
 ];
 
-const dateFields = ["iN4MkMAfTCI", "l1pU8bGbUmO"];
+const dateFields = ["# date_of_notification", "dateofbirth"];
 
 const createMap = (filename) => {
 	return new Promise((resolve, reject) => {
@@ -48,10 +48,11 @@ const convert = (filename, payload, deMap) => {
 		fs.createReadStream(filename)
 			.pipe(csv({ skipComments: false }))
 			.on("data", (data) => {
+
 				dateFields.forEach((f) => {
 					if (!!data[f]) {
-						const val = data[f].replace(/^(\d+)\/(\d+)/, "$2/$1");
-
+						const val = data[f];//.replace(/^(\d+)\/(\d+)/, "$2/$1");
+						// console.log("val", val);
 						data[f] = moment(val, [
 							"D/M/YYYY",
 							"DD/MM/YYYY",
@@ -76,6 +77,9 @@ const convert = (filename, payload, deMap) => {
 						.filter((de) => !!de.dataElement),
 				};
 
+				
+				//occuredAt = date of notification
+				event['occurredAt'] = event.dataValues.find(de => de.dataElement == "iN4MkMAfTCI")?.value;
 				// console.log("ev", event);
 				results.push(event);
 			})

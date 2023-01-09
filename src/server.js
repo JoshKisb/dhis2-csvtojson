@@ -107,6 +107,8 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 
 			console.log("Converted to json...");
 
+			// res.json({events}); return;
+
 			const timestr = Date.now();
 			const outfile = `payloads/${timestr}_failed.json`;
 			// const data = { events: results };
