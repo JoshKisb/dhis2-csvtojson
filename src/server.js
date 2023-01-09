@@ -7,6 +7,9 @@ const { resolve } = require("path");
 const upload = multer({ dest: "../uploads/" });
 const birthsDEMap = require('../dataelements/births.json')
 const deathsDEMap = require('../dataelements/deaths.json')
+const axiosRetry = require('axios-retry');
+
+axiosRetry(axios, { retries: 3 });
 
 const app = express();
 const port = 3000;
@@ -74,8 +77,8 @@ const makeAPIRequest = (data) => {
 				resolve(response.data);
 			})
 			.catch(function (error) {
-				console.log(error);
-				reject({ error });
+				console.log(error.response ?? error);
+				reject({ error: error.response ?? error });
 			});
 	});
 };
