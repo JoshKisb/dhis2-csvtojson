@@ -8,6 +8,7 @@ const upload = multer({ dest: "../uploads/" });
 const birthsDEMap = require('../dataelements/births.json')
 const deathsDEMap = require('../dataelements/deaths.json')
 const axiosRetry = require('axios-retry');
+const { cloneDeep } = require("lodash");
 
 axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
 
@@ -162,7 +163,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 				console.log("completed posting")
 				res.json(resp);
 			} catch (err) {
-				res.json({ error: removeCircularReferences({...err}) });
+				res.json({ error: removeCircularReferences(cloneDeep(err)) });
 			}
 			// Promise.all(chunks.map(chunk => makeAPIRequest(chunk)))
 			// .then(res => res.json(res))
@@ -170,7 +171,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 		});
 	} catch (error) {
 		// console.error(error);
-		res.json({ error: removeCircularReferences({...error}) });
+		res.json({ error: removeCircularReferences(cloneDeep(error)) });
 	}
 });
 
