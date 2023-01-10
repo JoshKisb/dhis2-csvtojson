@@ -142,7 +142,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 			// const data = { events: results };
 			fs.writeFileSync(outfile, JSON.stringify(failedOrgs, {}, 2), "utf8");
 			//fs.unlinkSync(req.file.path);
-			const chunkCount = Math.ceil(results.length / 10);
+			const chunkCount = Math.ceil(results.length / 35);
 
 			const chunks = chunk(results, chunkCount);
 
