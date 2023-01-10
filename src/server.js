@@ -9,7 +9,7 @@ const birthsDEMap = require('../dataelements/births.json')
 const deathsDEMap = require('../dataelements/deaths.json')
 const axiosRetry = require('axios-retry');
 
-axiosRetry(axios, { retries: 3 });
+axiosRetry(axios, { retries: 3, retryDelay: () => 3000 });
 
 const app = express();
 const port = 3000;
@@ -117,7 +117,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 			// const data = { events: results };
 			fs.writeFileSync(outfile, JSON.stringify(failedOrgs, {}, 2), "utf8");
 			//fs.unlinkSync(req.file.path);
-			const chunkCount = Math.ceil(results.length / 50);
+			const chunkCount = Math.ceil(results.length / 40);
 
 			const chunks = chunk(results, chunkCount);
 
