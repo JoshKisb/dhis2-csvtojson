@@ -95,6 +95,7 @@ const makeAPIRequest = (data) => {
 					username: apiUser,
 					password: apiPass,
 				},
+				timeout: 600000
 			})
 			.then(function (response) {
 				//console.log(response);
