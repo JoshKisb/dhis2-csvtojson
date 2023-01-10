@@ -63,6 +63,30 @@ app.get("/", (req, res) => {
 	res.send("API Server is running");
 });
 
+// provided by chatgpt
+function removeCircularReferences(obj, seen) {
+	seen = seen || new WeakSet();
+ 
+	if (obj !== Object(obj)) {
+	  return obj;
+	}
+ 
+	if (seen.has(obj)) {
+	  return '[Circular]';
+	}
+ 
+	seen.add(obj);
+ 
+	for (const key of Object.keys(obj)) {
+	  obj[key] = removeCircularReferences(obj[key], seen);
+	}
+ 
+	return obj;
+ }
+ 
+
+ 
+
 const makeAPIRequest = (data) => {
 	return new Promise((resolve, reject) => {
 		axios
@@ -137,15 +161,15 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 				console.log("completed posting")
 				res.json(resp);
 			} catch (err) {
-				res.json({ error: err });
+				res.json({ error: removeCircularReferences(err) });
 			}
 			// Promise.all(chunks.map(chunk => makeAPIRequest(chunk)))
 			// .then(res => res.json(res))
 			// .catch(err => res.json(err))
 		});
 	} catch (error) {
-		console.error(error);
-		res.json({ error });
+		// console.error(error);
+		res.json({ error: removeCircularReferences(error) });
 	}
 });
 
