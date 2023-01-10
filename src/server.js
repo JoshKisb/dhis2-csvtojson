@@ -142,7 +142,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 			// const data = { events: results };
 			fs.writeFileSync(outfile, JSON.stringify(failedOrgs, {}, 2), "utf8");
 			//fs.unlinkSync(req.file.path);
-			const chunkCount = Math.ceil(results.length / 35);
+			const chunkCount = Math.ceil(results.length / 30);
 
 			const chunks = chunk(results, chunkCount);
 
@@ -162,7 +162,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 				console.log("completed posting")
 				res.json(resp);
 			} catch (err) {
-				res.json({ error: removeCircularReferences(err) });
+				res.json({ error: removeCircularReferences({...err}) });
 			}
 			// Promise.all(chunks.map(chunk => makeAPIRequest(chunk)))
 			// .then(res => res.json(res))
@@ -170,7 +170,7 @@ app.post("/", upload.single("file"), async function (req, res, next) {
 		});
 	} catch (error) {
 		// console.error(error);
-		res.json({ error: removeCircularReferences(error) });
+		res.json({ error: removeCircularReferences({...error}) });
 	}
 });
 
